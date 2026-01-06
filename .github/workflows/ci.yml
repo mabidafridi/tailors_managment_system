@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI Pipeline
 
 on:
   push:
@@ -9,51 +9,41 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Debug - Show all Python files
-      run: |
-        echo "=== All Python files ==="
-        find . -name "*.py" -type f
-        echo "=== Tests directory ==="
-        ls -la tests/
-    
+    - name: Checkout code
+      uses: actions/checkout@v3
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-    
+
     - name: Install dependencies
       run: |
-        # Create a virtual environment
         python -m venv venv
         source venv/bin/activate
-        
-        # Install dependencies if requirements.txt exists
-        if [ -f "requirements.txt" ]; then
+        pip install --upgrade pip
+        if [ -f requirements.txt ]; then
           pip install -r requirements.txt
         else
-          # Common Flask dependencies
-          pip install flask pytest flask-testing
+          pip install flask pytest
         fi
-        
-        # Install current directory as package
-        pip install -e .
-    
+
     - name: Run tests
       run: |
         source venv/bin/activate
-        python -m pytest tests/ -v
-    
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        pytest tests/ -v
+
   build:
     runs-on: ubuntu-latest
     needs: test
-    
+
     steps:
-    - uses: actions/checkout@v3
-    
+    - name: Checkout code
+      uses: actions/checkout@v3
+
     - name: Build Docker image
       run: |
         docker build -t tailors-app .
