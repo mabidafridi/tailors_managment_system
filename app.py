@@ -99,14 +99,15 @@ def add_user():
             flash(f"Error: {str(e)}", 'danger')
     
     return render_template('add_user.html')
-# ... (baaki code same rahega, sirf neeche wale routes add kar ya replace kar)
+
+@app.route('/print/<string:user_id>')
+def print_customer(user_id):
+    customer = User.query.filter_by(userId=user_id).first_or_404()
+    return render_template('print_customer.html', customer=customer)
 
 @app.route('/update/<string:user_id>', methods=['GET', 'POST'])
 def update_customer(user_id):
-    customer = User.query.filter_by(userId=user_id).first()
-    if not customer:
-        flash("Customer not found!", 'danger')
-        return redirect('/user')
+    customer = User.query.filter_by(userId=user_id).first_or_404()
 
     if request.method == 'POST':
         try:
@@ -129,29 +130,28 @@ def update_customer(user_id):
             flash('Customer Updated Successfully!', 'success')
             return redirect('/user')
         except Exception as e:
-            flash(f"Error: {str(e)}", 'danger')
+            flash(f"Update Error: {str(e)}", 'danger')
 
     return render_template('update_customer.html', customer=customer)
+# ... (baaki code same rahega, sirf neeche wala naya route add kar)
+
+@app.route('/view/<string:user_id>')
+def view_customer(user_id):
+    customer = User.query.filter_by(userId=user_id).first_or_404()
+    return render_template('view_customer.html', customer=customer)
 
 @app.route('/delete/<string:user_id>', methods=['POST'])
 def delete_customer(user_id):
-    customer = User.query.filter_by(userId=user_id).first()
-    if not customer:
-        flash("Customer not found!", 'danger')
-        return redirect('/user')
+    customer = User.query.filter_by(userId=user_id).first_or_404()
 
-    db.session.delete(customer)
-    db.session.commit()
-    flash('Customer Deleted Successfully!', 'success')
+    try:
+        db.session.delete(customer)
+        db.session.commit()
+        flash('Customer Deleted Successfully!', 'success')
+    except Exception as e:
+        flash(f"Delete Error: {str(e)}", 'danger')
+
     return redirect('/user')
-@app.route('/print/<string:user_id>')
-def print_customer(user_id):
-    customer = User.query.filter_by(userId=user_id).first()
-    if not customer:
-        flash("Customer not found!", 'danger')
-        return redirect('/user')
-    
-    return render_template('print_customer.html', customer=customer)
 
 if __name__ == '__main__':
     app.run(debug=True)

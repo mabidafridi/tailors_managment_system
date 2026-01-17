@@ -1,68 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    <title>All Customers</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <meta charset="UTF-8">
-    <title>All Customers - Tailor Management</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { text-align: center; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .success { background-color: #d4edda; padding: 15px; border-radius: 5px; margin-bottom: 15px; }
-        .danger { background-color: #f8d7da; padding: 15px; border-radius: 5px; margin-bottom: 15px; }
-        a { color: #007bff; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>All Customers</h1>
 
-    <h1>All Customers</h1>
-
-    <!-- Flash Messages (Success/Error) -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="{{ category }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
-    <!-- Customers Table -->
-    {% if users %}
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Suits</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr>
-                    <td>{{ user.userId }}</td>
-                    <td>{{ user.userName }}</td>
-                    <td>{{ user.phone }}</td>
-                    <td>{{ user.numberOfSuit }}</td>
-                    <td>
-                        <a href="{{ url_for('print_customer', user_id=user.userId) }}">Print</a>
-                    </td>
-                </tr>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="{{ 'success-msg' if category == 'success' else 'danger-msg' }}">
+                        {{ message }}
+                    </div>
                 {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p style="text-align:center; color:gray;">No customers added yet. <a href="/add_user">Add one now!</a></p>
-    {% endif %}
+            {% endif %}
+        {% endwith %}
 
-    <br>
-    <a href="/add_user">+ Add New Customer</a>
+        {% if users %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Suits</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.userId }}</td>
+                        <td>{{ user.userName }}</td>
+                        <td>{{ user.phone }}</td>
+                        <td>{{ user.numberOfSuit }}</td>
+                        
+                        <td>
+                            <a href="{{ url_for('update_customer', user_id=user.userId) }}" class="btn">Update</a>
+                            
+                            <form action="{{ url_for('delete_customer', user_id=user.userId) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn" style="background:#e74c3c;" 
+                                        onclick="return confirm('Delete {{ user.userName }}? This cannot be undone.')">
+                                    Delete
+                                </button>
+                            </form>
+                            
+                            <a href="{{ url_for('print_customer', user_id=user.userId) }}" class="btn">Print</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No customers yet. Add one!</p>
+        {% endif %}
 
+        <br>
+        <a href="/add_user" class="btn">+ Add New Customer</a>
+        <br><br>
+        <a href="/" class="back-btn">← Back to Home</a>
+    </div>
 </body>
 </html>

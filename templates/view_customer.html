@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Customer - {{ customer.userName }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Customer Details: {{ customer.userName }}</h1>
+
+        <p><strong>ID:</strong> {{ customer.userId }}</p>
+        <p><strong>Date:</strong> {{ customer.date.strftime('%d-%m-%Y') }}</p>
+
+        <h2>Basic Info</h2>
+        <table>
+            <tr><th>Phone</th><td>{{ customer.phone }}</td></tr>
+            <tr><th>Address</th><td>{{ customer.address }}</td></tr>
+            <tr><th>Number of Suits</th><td>{{ customer.numberOfSuit }}</td></tr>
+        </table>
+
+        <h2>Shalwar Measurements</h2>
+        <table>
+            <tr><th>Width</th><td>{{ customer.width }}</td></tr>
+            <tr><th>Height</th><td>{{ customer.height }}</td></tr>
+            <tr><th>Arm</th><td>{{ customer.arm }}</td></tr>
+            <tr><th>Color</th><td>{{ customer.color }}</td></tr>
+            <tr><th>Pocket</th><td>{{ customer.pocket }}</td></tr>
+            <tr><th>Front Pocket</th><td>{{ customer.frontPocket }}</td></tr>
+            <tr><th>Chest Width</th><td>{{ customer.chestWidth }}</td></tr>
+            <tr><th>Daman</th><td>{{ customer.daman }}</td></tr>
+        </table>
+
+        <br><br>
+        <a href="{{ url_for('update_customer', user_id=customer.userId) }}" class="btn">Edit / Update</a>
+        <a href="/" class="back-btn">← Back to Home</a>
+    </div>
+</body>
+</html>
